@@ -28,9 +28,10 @@
  
  dvar boolean pc[p in P][c in C];
  dvar boolean po[p in P][o in O];
+ dvar boolean ch[p in P];
  
- // Constant. model A is a feasibility-only model.
- minimize 1;
+ // Minimize the number of changes
+ minimize (sum(p in P) ch[p]);
   
  subject to {
  	// Each position has one class and only one class assigned.
@@ -49,6 +50,10 @@
  	// Check the "window"
  	forall(p in P, o in O)
  	  sum(pk in p..(p + k[o] - 1) : (p + k[o] - 1 <= nPositions)) po[pk][o] <= m[o];
+ 	  
+ 	// Is there a change in p? If the number of inequalities the pc arrays is 4, yes.
+ 	forall(p in P)
+ 	  ch[p] == (sum(c in C : p > 1 && p < nPositions) ((pc[p-1][c] != pc[p][c]) + (pc[p][c] != pc[p+1][c])) == 4);
  }
  
  execute {
@@ -61,6 +66,11 @@
  		if (placed == 0) {writeln("ERROR: In position " + p + " there is no car"); stop();}
  		else if (placed > 1) {writeln("ERROR: In position " + p + " there is more than one car");stop();}
  		else {solution[p] = cl; write(cl + " ");} 		 
+ 	}
+ 	writeln();
+ 	write("CHANGE:              ");
+ 	for (var p = 1; p <= nPositions; ++p) {
+ 		write(ch[p] + " ");
  	}
  	writeln();writeln();
  	for (var o = 1; o <= nOptions; ++o) {
@@ -86,6 +96,5 @@
  		}
  		
  		writeln();
- 	} 		 		 	
- 	
+ 	}
  }
