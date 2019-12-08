@@ -53,7 +53,7 @@
  	  
  	// Is there a change in p? If the number of inequalities the pc arrays is 4, yes.
  	forall(p in P)
- 	  ch[p] == (sum(c in C : p > 1 && p < nPositions) ((pc[p-1][c] != pc[p][c]) + (pc[p][c] != pc[p+1][c])) == 4);
+ 	  ch[p] == sum(c in C : p > 1 && p < nPositions) ((pc[p][c] == 1) && (pc[p-1][c] != pc[p][c]) && (pc[p][c] != pc[p+1][c]));
  }
  
  execute {
